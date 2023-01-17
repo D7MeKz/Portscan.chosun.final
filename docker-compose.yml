@@ -23,7 +23,7 @@ services:
   
   web:
     build: 
-      context: ./docker/web_server
+      context: ./docker
       dockerfile: Dockerfile
     volumes:
       - "./web:/var/www/html"
