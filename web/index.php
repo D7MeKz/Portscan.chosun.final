@@ -138,7 +138,7 @@
 			                     <label for="max_port" class="ip-form-label">MAX PORT</label>
 			                     <input type="number" name="max_port" class="ip-form-input" id="max_port" min="1" max="65535" value="1024">
 		                     </div>
-                           <?php } else { ?>
+                           <?php }?>
                            <input class= "user-ip-btn" id ="btn" type="button" value="User IP" >
                            <script>
                               $(document).ready(function(){
@@ -149,7 +149,6 @@
                                  })
                               })
                            </script>
-                           <?php } ?>
 		                        <button id = "btn" name ="submit" type="submit">Submit</button>
 	                     </form>
                      </div>
