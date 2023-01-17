@@ -29,8 +29,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
       <!-- fontawesome -->
-
-      <script type="text/javascript" src="./utils/userIP.js"></script>
+      <script src="https://code.jquery.com/jquery-latest.min.js"></script>
       <script src="https://kit.fontawesome.com/6604ab134b.js" crossorigin="anonymous"></script>
    </head>
    <!-- body -->
@@ -140,7 +139,16 @@
 			                     <input type="number" name="max_port" class="ip-form-input" id="max_port" min="1" max="65535" value="1024">
 		                     </div>
                            <?php } else { ?>
-                           <input class= "user-ip-btn" id ="btn" type="button" value="User IP" onclick='setUserIP()'>
+                           <input class= "user-ip-btn" id ="btn" type="button" value="User IP" >
+                           <script>
+                              $(document).ready(function(){
+                                 $('.user-ip-btn').click(function(){
+                                    $.getJSON("https://api.ipify.org?format=jsonp&callback=?", function(json) {
+                                       $('#ip').val(json.ip);
+                                    });
+                                 })
+                              })
+                           </script>
                            <?php } ?>
 		                        <button id = "btn" name ="submit" type="submit">Submit</button>
 	                     </form>
