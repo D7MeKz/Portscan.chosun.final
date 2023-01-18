@@ -142,6 +142,7 @@ a {
 }
 
 a,
+#btn,
 .btn {
      text-decoration: none !important;
      outline: none !important;
