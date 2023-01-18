@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -136,7 +137,7 @@
 		                     </div>
 		                     <div class="ip-form-group">
 			                     <label for="max_port" class="ip-form-label">MAX PORT</label>
-			                     <input type="number" name="max_port" class="ip-form-input" id="max_port" min="1" max="65535" value="1024">
+			                     <input type="number" name="max_port" class="ip-form-input" id="max_port" min="1" max="65535" value="443">
 		                     </div>
                            <?php }?>
                            <input class= "user-ip-btn" id ="btn" type="button" value="User IP" >
@@ -160,54 +161,32 @@
             <h2>Result</h2>
             <div class="result-container">
             <?php
-            if(isset($_POST['submit']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
-            {
-               # local host의 경우 실제 IP 주소값 가져오기 
-               if ($_POST['ip'] == "127.0.0.1"){
-                  $addr = gethostbyname(php_uname('n'));
-                  $ip_addr = $addr[0];
+            $state_msg = "No Result";
+
+            if(isset($_POST['submit']) && ($_SERVER['REQUEST_METHOD'] === 'POST')){
+               $ip_addr = $_POST['ip'];
+               if(!isset($_POST['min_port']) && !isset($_POST['max_port'])){
+                  $min_port = 1;
+                  $max_port = 80;
                }
                else{
-                  $ip_addr = $_POST['ip'];
+                  $min_port = $_POST['min_port'];
+                  $max_port = $_POST['max_port']; 
+               }   
+               $cmd = "/usr/bin/nmap -p ".$min_port."-".$max_port." ".$ip_addr." --open | grep open";
+               $stream = popen($cmd,'r');
+
+               while (!feof($stream)) {
+                  $buf = fread($stream, 1024);
+                  if(!empty($buf)){
+                     echo nl2br($buf);
+                     $state_msg = "Scanning Complete!!";
+                  }
                }
-               $ip = preg_replace("/[^a-z0-9.-:]/i", "", $ip_addr);
-               $min_port = $_POST['min_port'];
-               $max_port = $_POST['max_port'];
-               if(!empty($ip) && function_exists("socket_create"))
-               {
-                   if(isset($min_port) && isset($max_port))
-                   {
-                       $socket = @socket_create(AF_INET, SOCK_STREAM, 0);
-                       echo "<h4 style='color:#BEEFFF'>Scanning ..." . $ip . "</h4>\n";
-                       
-                       for($p = $min_port ; $p <= $max_port ; $p = $p+1)
-                       {
-                           $num = preg_replace("/[^0-9]/", "", $p);
-                           if($num)
-                           {
-                               $result = @socket_connect($socket, $ip, $p);
-                               if($result)
-                               {
-                                 echo "<h4 style='color:white;' >" . $p . "</h6>\n";
-                               }
-                           }
-                           else
-                           {
-                               echo "<font color='red'>Socket Connection Error</font>\n";
-                           }
-                        
-                       }
-                       @socket_close($socket);
-                   }   
-               }
-               else{
-                   echo "<font color='red'>IP is empty!</font>\n";
-               }
+               pclose($stream);
             
             }
-            echo '<pre>';
-            # print_r($output);
-
+            echo $state_msg;
             ?>
             </div>
          </div>
